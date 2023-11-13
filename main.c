@@ -32,11 +32,14 @@ typedef struct FieldDescriptorArray
 	char end;		// n + 1
 } fda;
 
+void printchars(char *, unsigned char *, int);
+void print_header(fda *);
+
+
 int main(int argc, char *argv[])
 {
-	printf("inizio\n");
-	fda *mainfda;
-	printf("prima check\n");
+	fda mainfda;
+
 	if (argc < 2)
 	{
 		fprintf(stderr, "Missing required argument.\n"
@@ -44,17 +47,42 @@ int main(int argc, char *argv[])
 		exit(1);
 	}
 
-	printf("prima fopen\n");
 	FILE *f = fopen(argv[1], "rb");
 
-	printf("dopo fopen\n");
-	fread(mainfda, sizeof(fda), 1, f);
-	printf("dopo fread\n");
+ 	fread(&mainfda, sizeof(fda), 1, f);
 	fclose(f);
-	printf("dopo fclose\n");
-	//printf();
+
+	print_header(&mainfda);
 
 	return 0;
+}
+
+void print_header(fda *datas)
+{
+	printf("vdbase:\t%x\n", datas->vdbase);
+	printchars("open:\t", datas->open, sizeof(datas->open));
+	printf("recordsdb:\t%d\n", datas->recordsdb, sizeof(datas->recordsdb));
+	printf("headerb:\t%d\n", datas->headerb);
+	printf("recordb:\t%d\n", datas->recordb);
+	printchars("reservedf:\t", datas->reservedf, sizeof(datas->reservedf));
+	printf("transaction:\t%x\n", datas->transaction);
+	printf("encryptionflag:\t%x\n", datas->encryptionflag);
+	printchars("reserveds:\t", datas->reserveds, sizeof(datas->reserveds));
+	printf("mdxflag:\t%x\n", datas->mdxflag);
+	printf("driverid:\t%x\n", datas->driverid);
+	printchars("reservedt:\t", datas->reservedt, sizeof(datas->reservedt));
+
+	printf("end:\t%x\n", datas->end);
+
+
+}
+
+void printchars(char * text, unsigned char *c, int size)
+{
+	printf("%s", text);
+	for(int i = 0; i < size - 1; i++)
+		printf("%x, ", *c++);
+	printf("%x\n", *c);
 }
 
 
